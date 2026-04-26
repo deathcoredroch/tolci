@@ -1,0 +1,1552 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TOLC-I — Справочник Scienze & Matematica</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+* { -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim: rgba(201,168,76,0.15);
+  --navy: #0b1322;
+  --navy-mid: #121d35;
+  --cream: #f4efe5;
+  --text-on-dark: rgba(255,255,255,0.82);
+  --text-muted: rgba(255,255,255,0.35);
+  --divider: rgba(255,255,255,0.07);
+  --sidebar-w: 232px;
+  --topbar-h: 56px;
+  --bottomnav-h: 64px;
+}
+
+html { height: 100%; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--navy);
+  color: var(--text-on-dark);
+  height: 100%;
+  overflow: hidden;
+}
+
+.app { display: flex; height: 100vh; width: 100%; overflow: hidden; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  background: var(--navy);
+  border-right: 0.5px solid var(--divider);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  flex-shrink: 0;
+  z-index: 100;
+  transition: transform 0.25s ease;
+}
+
+.sidebar-logo {
+  padding: 18px 18px 16px;
+  border-bottom: 0.5px solid var(--divider);
+  flex-shrink: 0;
+  position: relative;
+}
+
+.sidebar-close {
+  display: none;
+  position: absolute;
+  top: 14px; right: 12px;
+  width: 28px; height: 28px;
+  border-radius: 7px;
+  background: rgba(255,255,255,0.06);
+  border: 0.5px solid rgba(255,255,255,0.1);
+  cursor: pointer;
+  align-items: center; justify-content: center;
+  transition: background 0.12s;
+}
+.sidebar-close:hover { background: rgba(255,255,255,0.12); }
+.sidebar-close svg { width: 12px; height: 12px; stroke: rgba(255,255,255,0.6); fill: none; stroke-width: 2; stroke-linecap: round; }
+
+.badge {
+  display: inline-block;
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border: 0.5px solid rgba(201,168,76,0.6);
+  border-radius: 20px;
+  padding: 3px 10px;
+  margin-bottom: 10px;
+}
+
+.logo-name { font-size: 14px; font-weight: 500; color: #fff; line-height: 1.4; }
+.logo-name em { font-family: 'EB Garamond', serif; font-style: italic; color: var(--gold); font-size: 15px; }
+
+.nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 0 16px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.1) transparent;
+}
+.nav::-webkit-scrollbar { width: 3px; }
+.nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+.nav-group {
+  font-size: 9.5px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-muted); padding: 14px 18px 5px;
+}
+.nav-divider { height: 0.5px; background: var(--divider); margin: 8px 18px; }
+
+.nav-item {
+  display: flex; align-items: center; gap: 11px;
+  padding: 9px 18px 9px 15px;
+  border-left: 3px solid transparent;
+  cursor: pointer; transition: background 0.12s;
+}
+.nav-item:hover { background: rgba(255,255,255,0.04); }
+.nav-item.active { background: rgba(201,168,76,0.09); border-left-color: var(--gold); }
+
+.nav-icon {
+  width: 30px; height: 30px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; background: rgba(255,255,255,0.05); transition: background 0.12s;
+}
+.nav-item.active .nav-icon { background: var(--gold-dim); }
+.nav-icon svg {
+  width: 15px; height: 15px;
+  stroke: rgba(255,255,255,0.4); fill: none;
+  stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round;
+  transition: stroke 0.12s;
+}
+.nav-item.active .nav-icon svg { stroke: var(--gold); }
+.nav-item:hover:not(.active) .nav-icon svg { stroke: rgba(255,255,255,0.65); }
+
+.nav-text { flex: 1; min-width: 0; }
+.nav-label {
+  font-size: 13px; color: var(--text-on-dark);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2;
+}
+.nav-item.active .nav-label { color: var(--gold); font-weight: 500; }
+.nav-sub {
+  font-size: 10.5px; color: var(--text-muted); margin-top: 2px;
+  font-style: italic; font-family: 'EB Garamond', serif;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* ── MAIN ── */
+.main {
+  flex: 1; display: flex; flex-direction: column;
+  height: 100vh; overflow-y: auto; overflow-x: hidden;
+  background: var(--cream); min-width: 0;
+  scrollbar-width: thin; scrollbar-color: rgba(0,0,0,0.12) transparent;
+}
+.main::-webkit-scrollbar { width: 4px; }
+.main::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 2px; }
+
+/* TOPBAR */
+.topbar {
+  display: none; height: var(--topbar-h);
+  background: var(--navy-mid); border-bottom: 0.5px solid var(--divider);
+  align-items: center; padding: 0 16px; gap: 12px; flex-shrink: 0; z-index: 50;
+}
+.hamburger {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: rgba(255,255,255,0.06); border: 0.5px solid rgba(255,255,255,0.1);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 4px; cursor: pointer; flex-shrink: 0;
+}
+.hamburger span {
+  display: block; width: 16px; height: 1.5px;
+  background: rgba(255,255,255,0.7); border-radius: 2px; transition: all 0.22s;
+}
+.sidebar-open .hamburger span:nth-child(1) { transform: translateY(5.5px) rotate(45deg); }
+.sidebar-open .hamburger span:nth-child(2) { opacity: 0; }
+.sidebar-open .hamburger span:nth-child(3) { transform: translateY(-5.5px) rotate(-45deg); }
+
+.topbar-logo { font-size: 13px; font-weight: 500; color: #fff; flex: 1; }
+.topbar-logo em { font-family: 'EB Garamond', serif; font-style: italic; color: var(--gold); }
+
+/* HERO */
+.hero {
+  background: var(--navy-mid); padding: 28px 36px 26px;
+  flex-shrink: 0; position: relative; overflow: hidden;
+}
+.hero::after {
+  content: ''; position: absolute; right: -40px; top: -40px;
+  width: 260px; height: 260px; border-radius: 50%;
+  border: 0.5px solid rgba(201,168,76,0.08); pointer-events: none;
+}
+.hero::before {
+  content: ''; position: absolute; right: 20px; top: 20px;
+  width: 160px; height: 160px; border-radius: 50%;
+  border: 0.5px solid rgba(201,168,76,0.06); pointer-events: none;
+}
+.hero-badge {
+  display: inline-block; font-size: 9.5px; font-weight: 500;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold);
+  border: 0.5px solid rgba(201,168,76,0.5); border-radius: 20px;
+  padding: 3px 11px; margin-bottom: 14px;
+}
+.hero-title {
+  font-size: 28px; font-weight: 700; color: #fff;
+  line-height: 1.22; margin-bottom: 10px; letter-spacing: -0.01em;
+}
+.hero-title em {
+  font-family: 'EB Garamond', serif; font-style: italic;
+  font-weight: 600; color: var(--gold); font-size: 30px;
+}
+.hero-title-label { /* inline on desktop */ }
+.hero-title-sub { /* inline on desktop */ }
+.hero-desc {
+  font-size: 13px; color: rgba(255,255,255,0.5);
+  line-height: 1.65; margin-bottom: 22px; max-width: 480px;
+}
+.hero-stats { display: flex; gap: 28px; flex-wrap: wrap; }
+.stat-num { font-size: 22px; font-weight: 700; color: var(--gold); font-family: 'EB Garamond', serif; line-height: 1; }
+.stat-label { font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-top: 3px; }
+
+/* CONTENT */
+.content {
+  padding: 30px 36px;
+}
+
+.section-tag { font-family: 'EB Garamond', serif; font-style: italic; font-size: 14px; color: var(--gold); margin-bottom: 5px; }
+.section-title { font-size: 24px; font-weight: 400; color: #1a1a2e; margin-bottom: 6px; letter-spacing: -0.01em; }
+.section-desc { font-size: 13px; color: #5a5a6a; line-height: 1.65; margin-bottom: 24px; }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.card { background: #fff; border-radius: 12px; border: 0.5px solid rgba(0,0,0,0.08); padding: 20px; }
+.card-title { font-size: 14px; font-weight: 500; color: #1a1a2e; margin-bottom: 3px; }
+.card-subtitle { font-family: 'EB Garamond', serif; font-style: italic; font-size: 13px; color: var(--gold); margin-bottom: 12px; }
+
+.tag { display: inline-block; font-size: 11.5px; padding: 4px 11px; border-radius: 20px; margin: 0 4px 6px 0; line-height: 1.4; }
+.tag-blue { background: #e8f0f8; color: #185fa5; }
+.tag-amber { background: #faeeda; color: #854f0b; }
+
+.formula { background: var(--navy); border-radius: 7px; padding: 10px 14px; font-family: 'EB Garamond', serif; font-size: 15px; color: #fff; margin-top: 8px; letter-spacing: 0.03em; }
+.formula + .formula { margin-top: 6px; }
+.formula span { color: var(--gold-light); }
+
+/* BOTTOM NAV — replaced */
+.bottom-nav { display: none; }
+
+/* ── MOBILE DRAWER ── */
+.mob-fab {
+  display: none;
+  position: fixed; bottom: 22px; right: 22px;
+  width: 50px; height: 50px; border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 4px 20px rgba(201,168,76,0.45);
+  align-items: center; justify-content: center;
+  cursor: pointer; z-index: 200;
+  transition: transform 0.18s, box-shadow 0.18s, background 0.18s;
+  border: none;
+}
+.mob-fab:active { transform: scale(0.93); }
+.mob-fab svg { width: 20px; height: 20px; stroke: var(--navy); fill: none; stroke-width: 2.2; stroke-linecap: round; transition: all 0.22s; }
+.drawer-open .mob-fab { background: rgba(255,255,255,0.1); box-shadow: none; }
+.drawer-open .mob-fab svg { stroke: rgba(255,255,255,0.75); }
+
+.mob-drawer {
+  display: none;
+  position: fixed; top: 0; right: 0; bottom: 0;
+  width: 280px;
+  background: var(--navy);
+  border-left: 0.5px solid var(--divider);
+  z-index: 180;
+  transform: translateX(100%);
+  pointer-events: none;
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  flex-direction: column;
+  overflow: hidden;
+}
+.drawer-open .mob-drawer { transform: translateX(0); pointer-events: auto; }
+
+.mob-drawer-header {
+  padding: 22px 18px 14px;
+  border-bottom: 0.5px solid var(--divider);
+  flex-shrink: 0;
+}
+.mob-drawer-title {
+  font-size: 10px; font-weight: 500; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px;
+}
+.mob-drawer-subtitle {
+  font-family: 'EB Garamond', serif; font-style: italic;
+  font-size: 19px; color: var(--gold); line-height: 1.2;
+}
+
+.mob-drawer-nav {
+  flex: 1; overflow-y: auto;
+  padding: 8px 0 90px;
+  pointer-events: auto;
+  scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.08) transparent;
+}
+.mob-drawer-nav::-webkit-scrollbar { width: 3px; }
+.mob-drawer-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+
+.mob-section { margin-bottom: 2px; }
+.mob-section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 11px 18px 6px;
+  cursor: pointer; user-select: none; touch-action: manipulation;
+}
+.mob-section-label {
+  font-size: 9.5px; font-weight: 500; letter-spacing: 0.13em;
+  text-transform: uppercase; color: var(--text-muted);
+  transition: color 0.15s;
+}
+.mob-section.open .mob-section-label { color: var(--gold); }
+.mob-section-arrow {
+  width: 13px; height: 13px;
+  stroke: var(--text-muted); fill: none; stroke-width: 2;
+  stroke-linecap: round; stroke-linejoin: round;
+  transition: transform 0.22s, stroke 0.15s;
+  flex-shrink: 0;
+}
+.mob-section.open .mob-section-arrow { transform: rotate(90deg); stroke: var(--gold); }
+
+.mob-section-items {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.mob-section.open .mob-section-items { max-height: 500px; }
+
+.mob-nav-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 9px 18px 9px 20px;
+  border-left: 2.5px solid transparent;
+  cursor: pointer; touch-action: manipulation;
+  transition: background 0.1s;
+}
+.mob-nav-item:hover { background: rgba(255,255,255,0.04); }
+.mob-nav-item.active { background: rgba(201,168,76,0.09); border-left-color: var(--gold); }
+.mob-nav-icon {
+  width: 28px; height: 28px; border-radius: 7px; flex-shrink: 0;
+  background: rgba(255,255,255,0.05);
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.12s;
+}
+.mob-nav-item.active .mob-nav-icon { background: var(--gold-dim); }
+.mob-nav-icon svg {
+  width: 14px; height: 14px;
+  stroke: rgba(255,255,255,0.38); fill: none;
+  stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round;
+  transition: stroke 0.12s;
+}
+.mob-nav-item.active .mob-nav-icon svg { stroke: var(--gold); }
+.mob-nav-item-text { min-width: 0; }
+.mob-nav-item-label { font-size: 13px; color: var(--text-on-dark); line-height: 1.2; }
+.mob-nav-item.active .mob-nav-item-label { color: var(--gold); font-weight: 500; }
+.mob-nav-item-sub {
+  font-size: 10px; color: var(--text-muted);
+  font-style: italic; font-family: 'EB Garamond', serif;
+  margin-top: 1px;
+}
+
+.mob-overlay {
+  display: block; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5); z-index: 170;
+  opacity: 0; pointer-events: none; transition: opacity 0.25s;
+}
+.drawer-open .mob-overlay { opacity: 1; pointer-events: auto; }
+
+/* OVERLAY */
+.overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5); z-index: 90;
+  opacity: 0; transition: opacity 0.25s;
+}
+
+/* ═══════════ TABLET ≤ 900px ═══════════ */
+@media (max-width: 900px) {
+  .topbar { display: flex; }
+  .sidebar-close { display: flex; }
+  .sidebar {
+    position: fixed; top: 0; left: 0; height: 100vh;
+    transform: translateX(-100%); box-shadow: none;
+  }
+  .sidebar-open .sidebar { transform: translateX(0); box-shadow: 4px 0 24px rgba(0,0,0,0.4); }
+  .sidebar-open .overlay { display: block; opacity: 1; }
+
+  .hero { padding: 22px 24px 20px; }
+  .hero-title { font-size: 22px; }
+  .hero-title em { font-size: 24px; }
+  .hero-desc { font-size: 12.5px; margin-bottom: 16px; }
+  .hero-stats { gap: 20px; }
+  .stat-num { font-size: 19px; }
+
+  .content { padding: 22px 24px; }
+  .section-title { font-size: 20px; }
+  .cards { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .card { padding: 16px; }
+}
+
+/* ═══════════ MOBILE ≤ 580px ═══════════ */
+@media (max-width: 580px) {
+  .topbar { display: none; }
+  .sidebar { display: none; }
+  .mob-fab { display: flex; }
+  .mob-drawer { display: flex; }
+  .mob-overlay { display: block; }
+
+  .app { flex-direction: column; height: 100vh; }
+  .main { flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+
+  .hero {
+    padding: 24px 20px 20px;
+    background: linear-gradient(160deg, #0f1d38 0%, var(--navy) 100%);
+  }
+  .hero::before, .hero::after { display: none; }
+  /* Gold accent line at top */
+  .hero { border-top: 2px solid var(--gold); }
+
+  .hero-badge {
+    font-size: 9px; margin-bottom: 12px; padding: 3px 10px;
+    letter-spacing: 0.12em;
+  }
+  .hero-title {
+    font-size: 11px; font-weight: 500;
+    color: rgba(255,255,255,0.45);
+    letter-spacing: 0.08em; text-transform: uppercase;
+    margin-bottom: 2px; line-height: 1.4;
+    display: flex; flex-direction: column; gap: 1px;
+  }
+  .hero-title-label { order: 1; }
+  .hero-title em {
+    display: block; order: 2;
+    font-size: 24px; font-weight: 600;
+    color: #fff; font-style: italic;
+    font-family: 'EB Garamond', serif;
+    letter-spacing: -0.01em; line-height: 1.2;
+    text-transform: none;
+  }
+  .hero-title-sub {
+    display: block; order: 3;
+    font-size: 17px; font-weight: 700;
+    color: #fff; text-transform: none;
+    letter-spacing: -0.01em; line-height: 1.2;
+    margin-top: 1px;
+  }
+  .hero-title br { display: none; }
+
+  .hero-desc {
+    font-size: 12px; margin-bottom: 18px; line-height: 1.6;
+    color: rgba(255,255,255,0.42);
+  }
+
+  .hero-stats {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 0; flex-wrap: unset; overflow: visible;
+    border: 0.5px solid rgba(255,255,255,0.08);
+    border-radius: 10px; overflow: hidden;
+  }
+  .hero-stats > div {
+    padding: 10px 6px;
+    text-align: center;
+    border-right: 0.5px solid rgba(255,255,255,0.08);
+  }
+  .hero-stats > div:last-child { border-right: none; }
+  .stat-num { font-size: 18px; }
+  .stat-label { font-size: 7px; white-space: nowrap; letter-spacing: 0.06em; }
+
+  .content { flex: 1; padding: 14px 14px 20px; }
+  .section-title { font-size: 17px; }
+  .section-desc { font-size: 12px; margin-bottom: 12px; }
+  .cards { display: flex; flex-direction: column; gap: 10px; }
+  .card { padding: 14px; width: 100%; min-width: 0; }
+  .card-title { font-size: 13px; }
+  .formula { font-size: 13.5px; padding: 8px 12px; word-break: break-word; }
+  .tag { font-size: 11px; padding: 3px 9px; }
+}
+
+/* ═══════════ LARGE ≥ 1280px ═══════════ */
+@media (min-width: 1280px) {
+  :root { --sidebar-w: 252px; }
+  .hero { padding: 34px 44px 30px; }
+  .hero-title { font-size: 32px; }
+  .hero-title em { font-size: 34px; }
+  .content { padding: 36px 44px; }
+  .cards { grid-template-columns: 1fr 1fr; gap: 20px; }
+}
+</style>
+</head>
+<body>
+
+<div class="overlay" id="overlay"></div>
+
+<div class="app" id="app">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="badge">TOLC-I</div>
+      <div class="logo-name">Справочник<br><em>Scienze & Matematica</em></div>
+      <div class="sidebar-close" id="sidebarClose">
+        <svg viewBox="0 0 12 12"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
+      </div>
+    </div>
+    <div class="nav">
+      <div class="nav-group">Физика</div>
+
+      <div class="nav-item active" data-section="meccanica">
+        <div class="nav-icon"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="2.8"/><line x1="8" y1="1.5" x2="8" y2="4"/><line x1="8" y1="12" x2="8" y2="14.5"/><line x1="1.5" y1="8" x2="4" y2="8"/><line x1="12" y1="8" x2="14.5" y2="8"/><line x1="3.1" y1="3.1" x2="4.9" y2="4.9"/><line x1="11.1" y1="11.1" x2="12.9" y2="12.9"/><line x1="12.9" y1="3.1" x2="11.1" y2="4.9"/><line x1="4.9" y1="11.1" x2="3.1" y2="12.9"/></svg></div>
+        <div class="nav-text"><div class="nav-label">Механика</div><div class="nav-sub">Meccanica</div></div>
+      </div>
+
+      <div class="nav-item" data-section="ottica">
+        <div class="nav-icon"><svg viewBox="0 0 16 16"><path d="M2 8 Q5 2 8 8 Q11 14 14 8"/><circle cx="8" cy="8" r="1.4" fill="rgba(255,255,255,0.35)" stroke="none"/></svg></div>
+        <div class="nav-text"><div class="nav-label">Оптика</div><div class="nav-sub">Ottica</div></div>
+      </div>
+
+      <div class="nav-item" data-section="termodinamica">
+        <div class="nav-icon"><svg viewBox="0 0 16 16"><path d="M3 13 L6 4 L9 9 L12 5"/><line x1="1.5" y1="13" x2="14.5" y2="13"/></svg></div>
+        <div class="nav-text"><div class="nav-label">Термодинамика</div><div class="nav-sub">Termodinamica</div></div>
+      </div>
+
+      <div class="nav-item" data-section="elettromagnetismo">
+        <div class="nav-icon"><svg viewBox="0 0 16 16"><path d="M8 2 L5 7 L8 7 L5 14"/><line x1="11" y1="3" x2="11" y2="13"/><line x1="9.5" y1="5" x2="12.5" y2="5"/><line x1="9.5" y1="11" x2="12.5" y2="11"/></svg></div>
+        <div class="nav-text"><div class="nav-label">Электромагнетизм</div><div class="nav-sub">Elettromagnetismo</div></div>
+      </div>
+
+      <div class="nav-divider"></div>
+      <div class="nav-group">Химия</div>
+
+      <div class="nav-item" data-section="chimica">
+        <div class="nav-icon"><svg viewBox="0 0 16 16"><circle cx="5.5" cy="5.5" r="2.5"/><circle cx="10.5" cy="10.5" r="2.5"/><line x1="7.5" y1="7.5" x2="8.5" y2="8.5"/></svg></div>
+        <div class="nav-text"><div class="nav-label">Химия & Строение</div><div class="nav-sub">Chimica</div></div>
+      </div>
+
+      <div class="nav-item" data-section="stechiometria">
+        <div class="nav-icon"><svg viewBox="0 0 16 16"><path d="M3 12 L5 5 L8 9 L11 5 L13 12"/><line x1="1.5" y1="12" x2="14.5" y2="12"/></svg></div>
+        <div class="nav-text"><div class="nav-label">Стехиометрия</div><div class="nav-sub">Stechiometria</div></div>
+      </div>
+
+      <div class="nav-item" data-section="chimica-organica">
+        <div class="nav-icon"><svg viewBox="0 0 16 16"><path d="M5 14 L7 8 L9 8 L11 14"/><line x1="6" y1="11" x2="10" y2="11"/><line x1="7" y1="8" x2="7.5" y2="2"/><line x1="9" y1="8" x2="8.5" y2="2"/><line x1="7.5" y1="2" x2="8.5" y2="2"/></svg></div>
+        <div class="nav-text"><div class="nav-label">Орган. химия</div><div class="nav-sub">Chimica organica</div></div>
+      </div>
+
+      <div class="nav-item" data-section="soluzioni">
+        <div class="nav-icon"><svg viewBox="0 0 16 16"><path d="M4 5 Q8 2 12 5 L13 11 Q8 14.5 3 11 Z"/><line x1="8" y1="4.5" x2="8" y2="11.5"/></svg></div>
+        <div class="nav-text"><div class="nav-label">Растворы & pH</div><div class="nav-sub">Soluzioni</div></div>
+      </div>
+
+      <div class="nav-item" data-section="ossidoriduzione">
+        <div class="nav-icon"><svg viewBox="0 0 16 16"><path d="M3 8 Q5 3 8 8 Q11 13 13 8"/><line x1="4" y1="5" x2="6" y2="5"/><line x1="10" y1="11" x2="12" y2="11"/></svg></div>
+        <div class="nav-text"><div class="nav-label">Окисление-восстановление</div><div class="nav-sub">Ossido-riduzione</div></div>
+      </div>
+
+      <div class="nav-divider"></div>
+      <div class="nav-group">Математика</div>
+
+      <div class="nav-item" data-section="numeri">
+        <div class="nav-icon"><svg viewBox="0 0 16 16"><text x="2" y="12" font-size="10" fill="rgba(255,255,255,0.5)" font-family="serif">ℝ</text><line x1="9" y1="4" x2="14" y2="4"/><line x1="9" y1="8" x2="14" y2="8"/><line x1="9" y1="12" x2="14" y2="12"/></svg></div>
+        <div class="nav-text"><div class="nav-label">Числа & Арифметика</div><div class="nav-sub">Aritmetica</div></div>
+      </div>
+
+      <div class="nav-item" data-section="algebra">
+        <div class="nav-icon"><svg viewBox="0 0 16 16"><line x1="3" y1="8" x2="13" y2="8"/><line x1="8" y1="3" x2="8" y2="13"/></svg></div>
+        <div class="nav-text"><div class="nav-label">Алгебра</div><div class="nav-sub">Algebra</div></div>
+      </div>
+
+      <div class="nav-item" data-section="polinomi">
+        <div class="nav-icon"><svg viewBox="0 0 16 16"><path d="M2 13 Q5 3 8 8 Q11 13 14 3" stroke-width="1.6"/></svg></div>
+        <div class="nav-text"><div class="nav-label">Многочлены</div><div class="nav-sub">Polinomi</div></div>
+      </div>
+
+      <div class="nav-item" data-section="equazioni">
+        <div class="nav-icon"><svg viewBox="0 0 16 16"><line x1="3" y1="7" x2="13" y2="7"/><line x1="3" y1="9" x2="13" y2="9"/><line x1="3" y1="4" x2="7" y2="4"/></svg></div>
+        <div class="nav-text"><div class="nav-label">Уравнения & Неравенства</div><div class="nav-sub">Equazioni</div></div>
+      </div>
+
+      <div class="nav-item" data-section="analisi">
+        <div class="nav-icon"><svg viewBox="0 0 16 16"><path d="M2 12 Q5 2 8 8 Q11 14 14 4"/><line x1="2" y1="12" x2="14" y2="12"/></svg></div>
+        <div class="nav-text"><div class="nav-label">Анализ</div><div class="nav-sub">Analisi matematica</div></div>
+      </div>
+
+      <div class="nav-item" data-section="geometria">
+        <div class="nav-icon"><svg viewBox="0 0 16 16"><polygon points="8,2 14,14 2,14"/></svg></div>
+        <div class="nav-text"><div class="nav-label">Геометрия</div><div class="nav-sub">Geometria</div></div>
+      </div>
+
+      <div class="nav-item" data-section="geometria-analitica">
+        <div class="nav-icon"><svg viewBox="0 0 16 16"><line x1="2" y1="8" x2="14" y2="8"/><line x1="8" y1="2" x2="8" y2="14"/><circle cx="11" cy="5" r="3"/></svg></div>
+        <div class="nav-text"><div class="nav-label">Аналит. геометрия</div><div class="nav-sub">Geometria analitica</div></div>
+      </div>
+
+      <div class="nav-item" data-section="trigonometria">
+        <div class="nav-icon"><svg viewBox="0 0 16 16"><path d="M2 10 Q5 3 8 8 Q11 13 14 6"/><circle cx="4.5" cy="9" r="1.2" fill="rgba(255,255,255,0.3)" stroke="none"/><circle cx="11.5" cy="7" r="1.2" fill="rgba(255,255,255,0.3)" stroke="none"/></svg></div>
+        <div class="nav-text"><div class="nav-label">Тригонометрия</div><div class="nav-sub">Trigonometria</div></div>
+      </div>
+
+      <div class="nav-item" data-section="statistica">
+        <div class="nav-icon"><svg viewBox="0 0 16 16"><rect x="2" y="5" width="12" height="8" rx="1"/><line x1="5" y1="5" x2="5" y2="3"/><line x1="11" y1="5" x2="11" y2="3"/><line x1="2" y1="8" x2="14" y2="8"/></svg></div>
+        <div class="nav-text"><div class="nav-label">Статистика</div><div class="nav-sub">Statistica</div></div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <div class="topbar" id="topbar">
+      <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+      <div class="topbar-logo">TOLC-I <em>Справочник</em></div>
+    </div>
+
+    <div class="hero">
+      <div class="hero-badge">Полная подготовка к TOLC-I</div>
+      <div class="hero-title"><span class="hero-title-label">TOLC-I</span> <em>Полный справочник</em><span class="hero-title-sub">Scienze &amp; Matematica</span></div>
+      <div class="hero-desc">Математика, физика, химия — все темы официальной программы CISIA: формулы, таблицы, разборы и примеры задач.</div>
+      <div class="hero-stats">
+        <div><div class="stat-num">22</div><div class="stat-label">Разделов</div></div>
+        <div><div class="stat-num">300+</div><div class="stat-label">Формул</div></div>
+        <div><div class="stat-num">9</div><div class="stat-label">Блоков мат.</div></div>
+        <div><div class="stat-num">9</div><div class="stat-label">Блоков наук</div></div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ══ MECCANICA ══ -->
+      <div class="content-section" id="sec-meccanica">
+      <div class="section-tag">Meccanica</div>
+      <div class="section-title">Механика</div>
+      <div class="section-desc">Физические величины, законы Ньютона (включая всемирное тяготение), энергия, количество движения и механика жидкостей.</div>
+      <div class="cards">
+        <div class="card">
+          <div class="card-title">Скалярные и векторные величины</div>
+          <div class="card-subtitle">Grandezze scalari e vettoriali</div>
+          <span class="tag tag-blue">Скалярные: масса, время, температура, энергия</span>
+          <span class="tag tag-amber">Векторные: сила, скорость, ускорение, перемещение</span>
+          <p style="font-size:13px;color:#444;margin-top:12px;line-height:1.6"><strong>Скалярные</strong> — только число и единица.<br><strong>Векторные</strong> — модуль, направление и смысл.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">Кинематика</div>
+          <div class="card-subtitle">Cinematica</div>
+          <div class="formula">v = <span>Δx</span> / <span>Δt</span></div>
+          <div class="formula">a = <span>Δv</span> / <span>Δt</span></div>
+          <div class="formula">x = x₀ + v₀t + <span>½</span>at²</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Законы Ньютона</div>
+          <div class="card-subtitle">Leggi di Newton</div>
+          <div class="formula">F = <span>m · a</span> (II закон)</div>
+          <div class="formula">F₁₂ = −F₂₁ (III закон)</div>
+          <div class="formula">F_g = <span>G · m₁m₂ / r²</span> (тяготение)</div>
+          <div class="formula">G = <span>6.674 × 10⁻¹¹ Н·м²/кг²</span></div>
+          <p style="font-size:13px;color:#444;margin-top:10px;line-height:1.5">I закон (инерция): тело покоится или движется равномерно, если F_рез = 0.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">Импульс и мощность</div>
+          <div class="card-subtitle">Quantità di moto e potenza</div>
+          <div class="formula">p = <span>m · v</span> (импульс)</div>
+          <div class="formula">F = <span>Δp / Δt</span></div>
+          <div class="formula">P = <span>W / t = F · v</span> (мощность)</div>
+          <p style="font-size:13px;color:#444;margin-top:10px;line-height:1.5">Закон сохранения импульса: в замкнутой системе Σp = const.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">Энергия и работа</div>
+          <div class="card-subtitle">Energia e lavoro</div>
+          <div class="formula">W = <span>F · d · cos θ</span></div>
+          <div class="formula">Ek = <span>½mv²</span></div>
+          <div class="formula">Ep = <span>mgh</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Механика жидкостей</div>
+          <div class="card-subtitle">Meccanica dei fluidi</div>
+          <div class="formula">P = <span>F / S</span> (давление)</div>
+          <div class="formula">P = <span>P₀ + ρgh</span> (гидростатика)</div>
+          <div class="formula">F_Arch = <span>ρ_жидк · g · V</span> (Архимед)</div>
+          <div class="formula">P₁ + ½ρv₁² + ρgh₁ = <span>P₂ + ½ρv₂² + ρgh₂</span></div>
+          <p style="font-size:13px;color:#444;margin-top:8px;line-height:1.5">Последнее — уравнение Бернулли. Тело плавает если ρ_тела ≤ ρ_жидкости.</p>
+        </div>
+      </div>
+      </div><!-- /sec-meccanica -->
+
+      <!-- ══ OTTICA ══ -->
+      <div class="content-section" id="sec-ottica" style="display:none">
+        <div class="section-tag">Ottica</div>
+        <div class="section-title">Оптика</div>
+        <div class="section-desc">Геометрическая оптика: отражение, преломление, зеркала, линзы, призмы. Системы линз.</div>
+        <div class="cards">
+          <div class="card">
+            <div class="card-title">Законы отражения и преломления</div>
+            <div class="card-subtitle">Riflessione e rifrazione</div>
+            <div class="formula">θᵢ = <span>θᵣ</span></div>
+            <div class="formula">n₁ sin θ₁ = <span>n₂ sin θ₂</span> (Снеллиус)</div>
+            <div class="formula">n = <span>c / v</span></div>
+            <p style="font-size:13px;color:#444;margin-top:12px;line-height:1.6">Полное внутреннее отражение: sin θc = n₂/n₁ (при n₁ &gt; n₂). При θ &gt; θc — луч не проходит.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Сферические зеркала</div>
+            <div class="card-subtitle">Specchi concavi e convessi</div>
+            <div class="formula">1/f = <span>1/dₒ + 1/dᵢ</span></div>
+            <div class="formula">f = <span>R / 2</span></div>
+            <div class="formula">M = <span>−dᵢ / dₒ</span></div>
+            <p style="font-size:13px;color:#444;margin-top:12px;line-height:1.6"><strong>Вогнутое (concavo):</strong> f &gt; 0, собирающее. <strong>Выпуклое (convesso):</strong> f &lt; 0, рассеивающее. dᵢ &lt; 0 → мнимое изображение.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Тонкие линзы</div>
+            <div class="card-subtitle">Lenti sottili (concave e convesse)</div>
+            <div class="formula">1/f = <span>1/dₒ + 1/dᵢ</span></div>
+            <div class="formula">D = <span>1/f</span> (диоптрии, f в метрах)</div>
+            <p style="font-size:13px;color:#444;margin-top:12px;line-height:1.6"><strong>Собирающая (convessa):</strong> f &gt; 0. <strong>Рассеивающая (concava):</strong> f &lt; 0.<br>Системы линз: 1/f_tot = 1/f₁ + 1/f₂.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Призмы и электромагнитный спектр</div>
+            <div class="card-subtitle">Prismi e spettro EM</div>
+            <p style="font-size:13px;color:#444;margin-top:8px;line-height:1.6"><strong>Призма:</strong> свет преломляется на двух гранях; n зависит от длины волны → дисперсия (разложение в спектр).<br><br><strong>Спектр EM:</strong> радио → микроволны → ИК → видимый → УФ → рентген → γ-лучи.<br>c = λ · ν, E = hν (h = 6.63×10⁻³⁴ Дж·с).</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ TERMODINAMICA ══ -->
+      <div class="content-section" id="sec-termodinamica" style="display:none">
+        <div class="section-tag">Termodinamica</div>
+        <div class="section-title">Термодинамика</div>
+        <div class="section-desc">Температура, теплота, теплоёмкость, расширение тел, газовые законы и начала термодинамики.</div>
+        <div class="cards">
+          <div class="card">
+            <div class="card-title">Температура и теплота</div>
+            <div class="card-subtitle">Temperatura e calore</div>
+            <div class="formula">Q = <span>m · c · ΔT</span></div>
+            <div class="formula">T(K) = <span>T(°C) + 273.15</span></div>
+            <p style="font-size:13px;color:#444;margin-top:12px;line-height:1.6">c — удельная теплоёмкость (Дж/(кг·К)). Вода: c = 4186 Дж/(кг·К). Теплота передаётся от горячего к холодному (II начало).</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Тепловое расширение</div>
+            <div class="card-subtitle">Dilatazione termica</div>
+            <div class="formula">ΔL = <span>α · L₀ · ΔT</span> (линейное)</div>
+            <div class="formula">ΔV = <span>β · V₀ · ΔT</span> (объёмное)</div>
+            <p style="font-size:13px;color:#444;margin-top:12px;line-height:1.6">α — коэффициент линейного расширения; β ≈ 3α для твёрдых тел. Газы расширяются значительно больше твёрдых и жидких тел.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Идеальный газ</div>
+            <div class="card-subtitle">Gas ideale</div>
+            <div class="formula">pV = <span>nRT</span></div>
+            <div class="formula">R = <span>8.314 Дж/(моль·К)</span></div>
+            <div class="formula">p/T = <span>const</span> (при V=const)</div>
+            <div class="formula">pV = <span>const</span> (при T=const, Бойль)</div>
+            <div class="formula">V/T = <span>const</span> (при p=const, Шарль)</div>
+          </div>
+          <div class="card">
+            <div class="card-title">I и II начала термодинамики</div>
+            <div class="card-subtitle">Principi della termodinamica</div>
+            <div class="formula">ΔU = <span>Q − W</span></div>
+            <p style="font-size:13px;color:#444;margin-top:12px;line-height:1.6"><strong>I начало:</strong> энергия сохраняется. Q — теплота, поглощённая системой; W — работа, совершённая системой.<br><br><strong>II начало:</strong> теплота самопроизвольно переходит от горячего к холодному. Энтропия замкнутой системы не убывает.</p>
+            <div class="formula">η = <span>1 − T₂/T₁</span> (КПД Карно)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ ELETTROMAGNETISMO ══ -->
+      <div class="content-section" id="sec-elettromagnetismo" style="display:none">
+        <div class="section-tag">Elettromagnetismo</div>
+        <div class="section-title">Электромагнетизм</div>
+        <div class="section-desc">Электростатика, конденсаторы, закон Ома, магнитное поле, электромагнитные волны.</div>
+        <div class="cards">
+          <div class="card">
+            <div class="card-title">Закон Кулона и электрическое поле</div>
+            <div class="card-subtitle">Legge di Coulomb — Campo elettrostatico</div>
+            <div class="formula">F = <span>k · q₁q₂ / r²</span></div>
+            <div class="formula">k = <span>9 × 10⁹ Н·м²/Кл²</span></div>
+            <div class="formula">E = <span>F / q = k·Q / r²</span></div>
+            <div class="formula">V = <span>k·Q / r</span> (потенциал)</div>
+            <p style="font-size:13px;color:#444;margin-top:10px;line-height:1.5">Работа поля: W = q·ΔV. E = −ΔV/Δd между пластинами.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Конденсаторы</div>
+            <div class="card-subtitle">Condensatori</div>
+            <div class="formula">C = <span>Q / V</span></div>
+            <div class="formula">C = <span>ε₀ · A / d</span> (плоский)</div>
+            <div class="formula">E_конд = <span>Q²/(2C) = CV²/2</span></div>
+            <p style="font-size:13px;color:#444;margin-top:10px;line-height:1.5">Последовательно: 1/C = 1/C₁ + 1/C₂. Параллельно: C = C₁ + C₂.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Закон Ома и цепи</div>
+            <div class="card-subtitle">Legge di Ohm — Circuiti</div>
+            <div class="formula">V = <span>I · R</span></div>
+            <div class="formula">P = <span>V · I = I²R = V²/R</span></div>
+            <p style="font-size:13px;color:#444;margin-top:10px;line-height:1.5">Последовательно: R = R₁+R₂. Параллельно: 1/R = 1/R₁+1/R₂. Интенсивность тока I = Q/t (Кл/с = А).</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Магнитное поле и сила Лоренца</div>
+            <div class="card-subtitle">Campo magnetostatico — Forza di Lorentz</div>
+            <div class="formula">F = <span>qvB sin θ</span></div>
+            <div class="formula">F = <span>BIL sin θ</span> (на проводник)</div>
+            <p style="font-size:13px;color:#444;margin-top:10px;line-height:1.5">B — магнитная индукция (Тл). Направление F: правило правой руки. Магнитное поле прямого тока: B = μ₀I/(2πr).</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ CHIMICA ══ -->
+      <div class="content-section" id="sec-chimica" style="display:none">
+        <div class="section-tag">Chimica</div>
+        <div class="section-title">Химия & Строение вещества</div>
+        <div class="section-desc">Строение атома, периодическая таблица, типы связей, ионные и молекулярные соединения, вода и атмосфера.</div>
+        <div class="cards">
+          <div class="card">
+            <div class="card-title">Строение атома</div>
+            <div class="card-subtitle">Struttura atomica</div>
+            <span class="tag tag-blue">Протоны (Z) — заряд ядра</span>
+            <span class="tag tag-amber">Нейтроны (N) — в ядре</span>
+            <span class="tag tag-blue">Электроны — оболочки</span>
+            <div class="formula">A = <span>Z + N</span> (массовое число)</div>
+            <p style="font-size:13px;color:#444;margin-top:10px;line-height:1.5">Изотопы: одинаковый Z, разный N. Электронная конфигурация определяет химические свойства.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Периодическая таблица</div>
+            <div class="card-subtitle">Tavola periodica degli elementi</div>
+            <span class="tag tag-blue">Периоды → заполнение оболочек</span>
+            <span class="tag tag-amber">Группы → одинаковая валентность</span>
+            <p style="font-size:13px;color:#444;margin-top:12px;line-height:1.6">Слева направо: металлический характер убывает, электроотрицательность растёт. Сверху вниз: атомный радиус растёт, электроотрицательность убывает.<br><br><strong>Главные группы:</strong> IA (щелочные металлы), IIA (щёлочноземельные), VIIA (галогены), VIII/0 (благородные газы).</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Типы химических связей</div>
+            <div class="card-subtitle">Legami chimici</div>
+            <span class="tag tag-blue">Ионная: металл + неметалл</span>
+            <span class="tag tag-amber">Ковалентная: неметалл + неметалл</span>
+            <span class="tag tag-blue">Металлическая: металл + металл</span>
+            <span class="tag tag-amber">Водородная: H···F, O, N</span>
+            <p style="font-size:13px;color:#444;margin-top:12px;line-height:1.6"><strong>Ионные соединения:</strong> кристаллическая решётка, высокие T плавления, проводят ток в растворе.<br><strong>Молекулярные:</strong> более низкие T плавления.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Вода и атмосфера</div>
+            <div class="card-subtitle">Acqua e atmosfera</div>
+            <div class="formula">H₂O: <span>угол H–O–H ≈ 104.5°</span></div>
+            <p style="font-size:13px;color:#444;margin-top:10px;line-height:1.6">Вода — полярная молекула, водородные связи → аномально высокая T кипения (100°C).<br><br><strong>Атмосфера:</strong> N₂ (~78%), O₂ (~21%), Ar (~1%), CO₂ (~0.04%). CO₂ — парниковый газ. O₃ (озон) в стратосфере поглощает УФ.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ STECHIOMETRIA ══ -->
+      <div class="content-section" id="sec-stechiometria" style="display:none">
+        <div class="section-tag">Stechiometria</div>
+        <div class="section-title">Стехиометрия</div>
+        <div class="section-desc">Моль, молярная масса, уравнивание реакций, стехиометрические расчёты, символика химических формул.</div>
+        <div class="cards">
+          <div class="card">
+            <div class="card-title">Моль и молярная масса</div>
+            <div class="card-subtitle">Quantità di sostanza</div>
+            <div class="formula">n = <span>m / M</span></div>
+            <div class="formula">N = <span>n · Nₐ</span></div>
+            <div class="formula">Nₐ = <span>6.022 × 10²³ моль⁻¹</span></div>
+            <p style="font-size:13px;color:#444;margin-top:10px;line-height:1.5">M — молярная масса (г/моль), m — масса в граммах. Молярный объём идеального газа при н.у.: Vm = 22.4 л/моль.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Химические символы и формулы</div>
+            <div class="card-subtitle">Simbologia chimica</div>
+            <p style="font-size:13px;color:#444;margin-top:8px;line-height:1.6"><strong>Атомный символ:</strong> ᴬ_Z X (A — масса, Z — заряд).<br><strong>Молекулярная формула:</strong> H₂O, CO₂, NaCl.<br><strong>Уравнение реакции:</strong> реагенты → продукты, закон сохранения масс.<br><br>Коэффициенты уравниваются так, чтобы число атомов каждого элемента совпадало с обеих сторон.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Стехиометрические расчёты</div>
+            <div class="card-subtitle">Calcoli stechiometrici</div>
+            <p style="font-size:13px;color:#444;margin-top:8px;line-height:1.6">Схема расчёта:<br>1. Записать и уравнять реакцию.<br>2. Найти n реагента: n = m/M.<br>3. По коэффициентам найти n продукта.<br>4. Найти m продукта: m = n · M.<br><br>Пример: 2H₂ + O₂ → 2H₂O<br>4 г H₂ = 2 моль → 2 моль H₂O = 36 г.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Концентрация раствора</div>
+            <div class="card-subtitle">Concentrazione</div>
+            <div class="formula">C (моль/л) = <span>n / V(л)</span></div>
+            <div class="formula">ω (масс. доля) = <span>m_в-ва / m_р-ра</span></div>
+            <div class="formula">C = <span>ω · ρ · 1000 / M</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ CHIMICA ORGANICA ══ -->
+      <div class="content-section" id="sec-chimica-organica" style="display:none">
+        <div class="section-tag">Chimica organica</div>
+        <div class="section-title">Органическая химия</div>
+        <div class="section-desc">Классы органических соединений, номенклатура IUPAC, изомерия и основные реакции.</div>
+        <div class="cards">
+          <div class="card">
+            <div class="card-title">Классы углеводородов</div>
+            <div class="card-subtitle">Idrocarburi</div>
+            <span class="tag tag-blue">Алканы CₙH₂ₙ₊₂</span><span class="tag tag-amber">Алкены CₙH₂ₙ</span><span class="tag tag-blue">Алкины CₙH₂ₙ₋₂</span><span class="tag tag-amber">Арены</span>
+          </div>
+          <div class="card">
+            <div class="card-title">Функциональные группы</div>
+            <div class="card-subtitle">Gruppi funzionali</div>
+            <span class="tag tag-blue">–OH спирт</span><span class="tag tag-amber">–COOH кислота</span><span class="tag tag-blue">–NH₂ амин</span><span class="tag tag-amber">C=O карбонил</span>
+          </div>
+          <div class="card">
+            <div class="card-title">Типы реакций</div>
+            <div class="card-subtitle">Tipi di reazione</div>
+            <span class="tag tag-blue">Замещение (SR, SN)</span><span class="tag tag-amber">Присоединение (A)</span><span class="tag tag-blue">Элиминирование (E)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ SOLUZIONI ══ -->
+      <div class="content-section" id="sec-soluzioni" style="display:none">
+        <div class="section-tag">Soluzioni & pH</div>
+        <div class="section-title">Растворы & pH</div>
+        <div class="section-desc">Кислоты и основания (теория Брёнстеда), pH, шкала кислотности, диссоциация, буферные растворы.</div>
+        <div class="cards">
+          <div class="card">
+            <div class="card-title">Кислоты и основания Брёнстеда</div>
+            <div class="card-subtitle">Acidi e basi (Brønsted)</div>
+            <p style="font-size:13px;color:#444;margin-top:8px;line-height:1.6"><strong>Кислота:</strong> донор протона H⁺ (отдаёт H⁺).<br><strong>Основание:</strong> акцептор протона H⁺ (принимает H⁺).<br><br>Сильные кислоты (полная диссоциация): HCl, H₂SO₄, HNO₃.<br>Слабые: CH₃COOH, H₂CO₃.<br>Сильные основания: NaOH, KOH. Слабые: NH₃.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Шкала pH</div>
+            <div class="card-subtitle">Scala del pH</div>
+            <div class="formula">pH = <span>−log[H⁺]</span></div>
+            <div class="formula">pOH = <span>−log[OH⁻]</span></div>
+            <div class="formula">pH + pOH = <span>14</span> (при 25°C)</div>
+            <div class="formula">Kw = <span>[H⁺][OH⁻] = 10⁻¹⁴</span></div>
+            <p style="font-size:13px;color:#444;margin-top:10px;line-height:1.5">pH &lt; 7: кислота. pH = 7: нейтрально. pH &gt; 7: щелочная среда.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Степень диссоциации и Ka</div>
+            <div class="card-subtitle">Grado di dissociazione</div>
+            <div class="formula">α = <span>n(диссоц.) / n₀</span></div>
+            <div class="formula">Ka = <span>[H⁺][A⁻] / [HA]</span></div>
+            <p style="font-size:13px;color:#444;margin-top:10px;line-height:1.5">Ka — константа кислотности. Чем больше Ka, тем сильнее кислота. pKa = −log Ka. Для слабой кислоты: [H⁺] ≈ √(Ka · C).</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Нейтрализация и соли</div>
+            <div class="card-subtitle">Neutralizzazione e sali</div>
+            <div class="formula">HCl + NaOH → <span>NaCl + H₂O</span></div>
+            <p style="font-size:13px;color:#444;margin-top:10px;line-height:1.5">Соли образуются при реакции кислоты с основанием. Соль сильной кислоты и сильного основания → pH = 7. Соль слабой кислоты → pH &gt; 7 (гидролиз).</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ ALGEBRA ══ -->
+      <div class="content-section" id="sec-algebra" style="display:none">
+        <div class="section-tag">Algebra</div>
+        <div class="section-title">Алгебра</div>
+        <div class="section-desc">Линейные и квадратные уравнения, теорема Виета, прогрессии, свойства корней.</div>
+        <div class="cards">
+          <div class="card">
+            <div class="card-title">Линейное уравнение</div>
+            <div class="card-subtitle">Equazione di primo grado</div>
+            <div class="formula">ax + b = 0 → <span>x = −b/a</span></div>
+            <p style="font-size:13px;color:#444;margin-top:10px;line-height:1.5">Если a = 0, b ≠ 0: нет решений. Если a = 0, b = 0: любое x — решение (уравнение тождественно).</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Квадратное уравнение и теорема Виета</div>
+            <div class="card-subtitle">Equazione di secondo grado — Viète</div>
+            <div class="formula">x = <span>(−b ± √(b²−4ac)) / 2a</span></div>
+            <div class="formula">D = <span>b² − 4ac</span></div>
+            <div class="formula">x₁ + x₂ = <span>−b/a</span></div>
+            <div class="formula">x₁ · x₂ = <span>c/a</span></div>
+            <p style="font-size:13px;color:#444;margin-top:10px;line-height:1.5">D &gt; 0: два различных корня. D = 0: один корень. D &lt; 0: нет вещественных корней.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Арифметическая прогрессия</div>
+            <div class="card-subtitle">Progressione aritmetica</div>
+            <div class="formula">aₙ = <span>a₁ + (n−1)d</span></div>
+            <div class="formula">S = <span>n(a₁ + aₙ) / 2</span></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Геометрическая прогрессия</div>
+            <div class="card-subtitle">Progressione geometrica</div>
+            <div class="formula">aₙ = <span>a₁ · qⁿ⁻¹</span></div>
+            <div class="formula">S = <span>a₁(1 − qⁿ) / (1 − q)</span></div>
+            <div class="formula">S∞ = <span>a₁ / (1 − q)</span> (|q| &lt; 1)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ ANALISI ══ -->
+      <div class="content-section" id="sec-analisi" style="display:none">
+        <div class="section-tag">Analisi matematica e funzioni</div>
+        <div class="section-title">Функции и Анализ</div>
+        <div class="section-desc">Понятие функции, область определения, пределы, производные стандартных функций, интегралы.</div>
+        <div class="cards">
+          <div class="card">
+            <div class="card-title">Понятие функции и ОДЗ</div>
+            <div class="card-subtitle">Concetto di funzione</div>
+            <p style="font-size:13px;color:#444;margin-top:8px;line-height:1.6">Функция f: X → Y ставит каждому x ∈ X единственное y ∈ Y.<br><br>ОДЗ (dominio): значения x, при которых f(x) определена.<br>Типичные ограничения: подкоренное выражение ≥ 0; знаменатель ≠ 0; аргумент логарифма &gt; 0.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Производные стандартных функций</div>
+            <div class="card-subtitle">Derivate fondamentali</div>
+            <div class="formula">(xⁿ)′ = <span>n·xⁿ⁻¹</span></div>
+            <div class="formula">(eˣ)′ = <span>eˣ</span></div>
+            <div class="formula">(ln x)′ = <span>1/x</span></div>
+            <div class="formula">(sin x)′ = <span>cos x</span></div>
+            <div class="formula">(cos x)′ = <span>−sin x</span></div>
+            <div class="formula">(tan x)′ = <span>1/cos²x</span></div>
+            <div class="formula">(aˣ)′ = <span>aˣ · ln a</span></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Правила дифференцирования</div>
+            <div class="card-subtitle">Regole di derivazione</div>
+            <div class="formula">(f·g)′ = <span>f′g + fg′</span></div>
+            <div class="formula">(f/g)′ = <span>(f′g − fg′)/g²</span></div>
+            <div class="formula">(f∘g)′ = <span>f′(g(x)) · g′(x)</span></div>
+            <p style="font-size:13px;color:#444;margin-top:8px;line-height:1.5">Последнее — правило цепочки (chain rule).</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Интегралы</div>
+            <div class="card-subtitle">Integrale</div>
+            <div class="formula">∫xⁿdx = <span>xⁿ⁺¹/(n+1) + C</span></div>
+            <div class="formula">∫eˣdx = <span>eˣ + C</span></div>
+            <div class="formula">∫(1/x)dx = <span>ln|x| + C</span></div>
+            <div class="formula">∫sin x dx = <span>−cos x + C</span></div>
+            <div class="formula">∫cos x dx = <span>sin x + C</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ GEOMETRIA ══ -->
+      <div class="content-section" id="sec-geometria" style="display:none">
+        <div class="section-tag">Geometria</div>
+        <div class="section-title">Геометрия</div>
+        <div class="section-desc">Планиметрия, стереометрия и аналитическая геометрия: прямая, окружность, конические сечения.</div>
+        <div class="cards">
+          <div class="card">
+            <div class="card-title">Отрезки, углы и теоремы</div>
+            <div class="card-subtitle">Segmenti, angoli, luoghi geometrici</div>
+            <span class="tag tag-blue">Теорема Пифагора: a²+b²=c²</span>
+            <span class="tag tag-amber">Сумма углов △ = 180°</span>
+            <p style="font-size:13px;color:#444;margin-top:12px;line-height:1.6"><strong>Окружность:</strong> геометрическое место точек, равноудалённых от центра.<br><strong>Серединный ⊥:</strong> ГМТ, равноудалённых от концов отрезка.<br><strong>Биссектриса:</strong> ГМТ, равноудалённых от сторон угла.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Площади плоских фигур</div>
+            <div class="card-subtitle">Aree figure piane</div>
+            <div class="formula">S△ = <span>½ · b · h = ½ab sin C</span></div>
+            <div class="formula">S○ = <span>π r²</span></div>
+            <div class="formula">S□ = <span>b · h</span></div>
+            <div class="formula">S правильн. n-уг. = <span>½ · a · n · r</span></div>
+            <div class="formula">Длина дуги = <span>r · α (α в рад.)</span></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Объёмы тел</div>
+            <div class="card-subtitle">Volumi dei solidi</div>
+            <div class="formula">V шара = <span>4/3 · π r³</span></div>
+            <div class="formula">V цилиндра = <span>π r² · h</span></div>
+            <div class="formula">V конуса = <span>1/3 · π r² · h</span></div>
+            <div class="formula">V пирамиды = <span>1/3 · S осн. · h</span></div>
+            <div class="formula">V паралл-да = <span>l · w · h</span></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Поверхности тел</div>
+            <div class="card-subtitle">Aree delle superfici</div>
+            <div class="formula">S шара = <span>4π r²</span></div>
+            <div class="formula">S бок. цилиндра = <span>2π r h</span></div>
+            <div class="formula">S полн. цилиндра = <span>2π r(r + h)</span></div>
+            <div class="formula">S бок. конуса = <span>π r l</span> (l — образующая)</div>
+            <div class="formula">S полн. конуса = <span>π r(r + l)</span></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Уравнение прямой</div>
+            <div class="card-subtitle">Retta nel piano</div>
+            <div class="formula">y = <span>kx + b</span></div>
+            <div class="formula">d = <span>|Ax₀ + By₀ + C| / √(A²+B²)</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ TRIGONOMETRIA ══ -->
+      <div class="content-section" id="sec-trigonometria" style="display:none">
+        <div class="section-tag">Trigonometria</div>
+        <div class="section-title">Тригонометрия</div>
+        <div class="section-desc">Основные тождества, формулы сложения, двойного и половинного угла, теоремы для треугольников.</div>
+        <div class="cards">
+          <div class="card">
+            <div class="card-title">Основные тождества</div>
+            <div class="card-subtitle">Identità fondamentali</div>
+            <div class="formula">sin²x + cos²x = <span>1</span></div>
+            <div class="formula">tan x = <span>sin x / cos x</span></div>
+            <div class="formula">1 + tan²x = <span>1/cos²x</span></div>
+            <div class="formula">1 + cot²x = <span>1/sin²x</span></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Формулы сложения (addizione)</div>
+            <div class="card-subtitle">Formule di addizione</div>
+            <div class="formula">sin(α±β) = <span>sinα cosβ ± cosα sinβ</span></div>
+            <div class="formula">cos(α±β) = <span>cosα cosβ ∓ sinα sinβ</span></div>
+            <div class="formula">tan(α±β) = <span>(tanα ± tanβ)/(1 ∓ tanα tanβ)</span></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Формулы двойного угла</div>
+            <div class="card-subtitle">Formule di duplicazione</div>
+            <div class="formula">sin 2α = <span>2 sinα cosα</span></div>
+            <div class="formula">cos 2α = <span>cos²α − sin²α</span></div>
+            <div class="formula">cos 2α = <span>2cos²α − 1 = 1 − 2sin²α</span></div>
+            <div class="formula">tan 2α = <span>2tanα / (1 − tan²α)</span></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Формулы половинного угла</div>
+            <div class="card-subtitle">Formule di bisezione</div>
+            <div class="formula">sin²(α/2) = <span>(1 − cosα) / 2</span></div>
+            <div class="formula">cos²(α/2) = <span>(1 + cosα) / 2</span></div>
+            <div class="formula">tan(α/2) = <span>sinα / (1 + cosα)</span></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Теоремы синусов и косинусов</div>
+            <div class="card-subtitle">Teoremi su triangoli</div>
+            <div class="formula">a/sin A = <span>b/sin B = c/sin C = 2R</span></div>
+            <div class="formula">c² = <span>a² + b² − 2ab cos C</span></div>
+            <div class="formula">S = <span>½ab sin C</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ STATISTICA ══ -->
+      <div class="content-section" id="sec-statistica" style="display:none">
+        <div class="section-tag">Statistica & Probabilità</div>
+        <div class="section-title">Статистика</div>
+        <div class="section-desc">Описательная статистика, гистограммы, комбинаторика, вероятность и случайные события.</div>
+        <div class="cards">
+          <div class="card">
+            <div class="card-title">Средние и показатели разброса</div>
+            <div class="card-subtitle">Valori medi e dispersione</div>
+            <div class="formula">x̄ = <span>Σxᵢ / n</span> (среднее)</div>
+            <div class="formula">σ² = <span>Σ(xᵢ − x̄)² / n</span> (дисперсия)</div>
+            <div class="formula">σ = <span>√σ²</span> (стандартное откл.)</div>
+            <p style="font-size:13px;color:#444;margin-top:10px;line-height:1.5"><strong>Мода:</strong> наиболее частое значение. <strong>Медиана:</strong> центральное значение при упорядоченном ряду.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Частоты и гистограммы</div>
+            <div class="card-subtitle">Frequenze e istogrammi</div>
+            <div class="formula">f_i = <span>n_i / n</span> (относит. частота)</div>
+            <p style="font-size:13px;color:#444;margin-top:12px;line-height:1.6"><strong>Гистограмма:</strong> по оси X — значения (или интервалы), по оси Y — частота (или относительная частота). Сумма всех частот = 1 (= 100%).<br><br><strong>Диаграмма частот:</strong> столбик для каждого значения. Площадь пропорциональна частоте. Читать: наиболее высокий столбик = мода.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Вероятность</div>
+            <div class="card-subtitle">Probabilità</div>
+            <div class="formula">P(A) = <span>m / n</span></div>
+            <div class="formula">P(A∪B) = <span>P(A) + P(B) − P(A∩B)</span></div>
+            <div class="formula">P(A|B) = <span>P(A∩B) / P(B)</span></div>
+            <p style="font-size:13px;color:#444;margin-top:10px;line-height:1.5">Независимые события: P(A∩B) = P(A)·P(B). Несовместные: P(A∩B) = 0.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Комбинаторика</div>
+            <div class="card-subtitle">Combinatoria — permutazioni e combinazioni</div>
+            <div class="formula">Pₙ = <span>n!</span> (перестановки)</div>
+            <div class="formula">Cₙᵏ = <span>n! / (k!(n−k)!)</span></div>
+            <div class="formula">Aₙᵏ = <span>n! / (n−k)!</span> (размещения)</div>
+            <p style="font-size:13px;color:#444;margin-top:10px;line-height:1.5">Cₙᵏ = "n choose k" — число способов выбрать k из n без учёта порядка.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ NUMERI ══ -->
+      <div class="content-section" id="sec-numeri" style="display:none">
+        <div class="section-tag">Aritmetica e Algebra</div>
+        <div class="section-title">Числа & Арифметика</div>
+        <div class="section-desc">Свойства целых, рациональных и вещественных чисел. Модуль. Степени и корни. Логарифмы.</div>
+        <div class="cards">
+          <div class="card">
+            <div class="card-title">Множества чисел</div>
+            <div class="card-subtitle">Insiemi numerici</div>
+            <span class="tag tag-blue">ℕ ⊂ ℤ ⊂ ℚ ⊂ ℝ</span>
+            <p style="font-size:13px;color:#444;margin-top:12px;line-height:1.6">ℕ — натуральные, ℤ — целые, ℚ — рациональные (дроби p/q), ℝ — вещественные (включают иррациональные, например √2, π).</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Модуль числа</div>
+            <div class="card-subtitle">Valore assoluto</div>
+            <div class="formula">|x| = <span>x если x ≥ 0; −x если x &lt; 0</span></div>
+            <div class="formula">|x| &lt; a ⟺ <span>−a &lt; x &lt; a</span></div>
+            <div class="formula">|x| &gt; a ⟺ <span>x &lt; −a или x &gt; a</span></div>
+            <p style="font-size:13px;color:#444;margin-top:12px;line-height:1.6">Свойства: |ab| = |a|·|b|; |a+b| ≤ |a|+|b| (неравенство треугольника).</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Степени и корни</div>
+            <div class="card-subtitle">Potenze e radici</div>
+            <div class="formula">aᵐ · aⁿ = <span>aᵐ⁺ⁿ</span></div>
+            <div class="formula">(aᵐ)ⁿ = <span>aᵐⁿ</span></div>
+            <div class="formula">a⁻ⁿ = <span>1 / aⁿ</span></div>
+            <div class="formula">ⁿ√a = <span>a^(1/n)</span></div>
+            <div class="formula">ⁿ√(a·b) = <span>ⁿ√a · ⁿ√b</span></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Логарифмы & Показательные функции</div>
+            <div class="card-subtitle">Logaritmi ed esponenziali</div>
+            <div class="formula">logₐ(x) = y ⟺ <span>aʸ = x</span></div>
+            <div class="formula">log(a·b) = <span>log a + log b</span></div>
+            <div class="formula">log(a/b) = <span>log a − log b</span></div>
+            <div class="formula">log(aⁿ) = <span>n · log a</span></div>
+            <div class="formula">logₐ(b) = <span>log b / log a</span></div>
+            <p style="font-size:13px;color:#444;margin-top:12px;line-height:1.6">ln x = logₑ x (натуральный), log x = log₁₀ x (десятичный). eˡⁿˣ = x.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ POLINOMI ══ -->
+      <div class="content-section" id="sec-polinomi" style="display:none">
+        <div class="section-tag">Algebra</div>
+        <div class="section-title">Многочлены (Polinomi)</div>
+        <div class="section-desc">Операции с многочленами, буквенные выражения, разложение на множители, схема Горнера.</div>
+        <div class="cards">
+          <div class="card">
+            <div class="card-title">Буквенные выражения</div>
+            <div class="card-subtitle">Calcolo letterale</div>
+            <div class="formula">(a+b)² = <span>a² + 2ab + b²</span></div>
+            <div class="formula">(a−b)² = <span>a² − 2ab + b²</span></div>
+            <div class="formula">(a+b)(a−b) = <span>a² − b²</span></div>
+            <div class="formula">(a+b)³ = <span>a³ + 3a²b + 3ab² + b³</span></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Разложение на множители</div>
+            <div class="card-subtitle">Decomposizione in fattori</div>
+            <div class="formula">a³ − b³ = <span>(a−b)(a²+ab+b²)</span></div>
+            <div class="formula">a³ + b³ = <span>(a+b)(a²−ab+b²)</span></div>
+            <p style="font-size:13px;color:#444;margin-top:12px;line-height:1.6">Методы: вынесение за скобку, группировка, формулы сокращённого умножения, теорема Безу (если p(r)=0, то (x−r) — делитель).</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Деление многочленов (схема Горнера)</div>
+            <div class="card-subtitle">Divisione tra polinomi / Ruffini</div>
+            <p style="font-size:13px;color:#444;margin-top:8px;line-height:1.6">Для деления p(x) на (x−r): записываем коэффициенты, умножаем и складываем по схеме. Остаток = p(r).<br><br>Пример: x³−6x²+11x−6 ÷ (x−1):<br>1 | −6 | 11 | −6<br>→ 1 | −5 | 6 | 0 (делится нацело)</p>
+          </div>
+          <div class="card">
+            <div class="card-title">МНК и операции</div>
+            <div class="card-subtitle">Operazioni con polinomi</div>
+            <p style="font-size:13px;color:#444;margin-top:8px;line-height:1.6"><strong>Сложение/Вычитание:</strong> приводить подобные члены.<br><strong>Умножение:</strong> каждый член на каждый.<br><strong>Алгебраические дроби:</strong> сокращать только на общие множители числителя и знаменателя.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ EQUAZIONI ══ -->
+      <div class="content-section" id="sec-equazioni" style="display:none">
+        <div class="section-tag">Algebra</div>
+        <div class="section-title">Уравнения & Неравенства</div>
+        <div class="section-desc">Линейные, квадратные, дробно-рациональные, иррациональные уравнения и неравенства. Системы.</div>
+        <div class="cards">
+          <div class="card">
+            <div class="card-title">Системы линейных уравнений</div>
+            <div class="card-subtitle">Sistemi di equazioni di primo grado</div>
+            <p style="font-size:13px;color:#444;margin-top:8px;line-height:1.6"><strong>Метод подстановки:</strong> выразить одну переменную через другую.<br><strong>Метод сложения:</strong> умножить уравнения и сложить для исключения переменной.<br><strong>Метод Крамера:</strong> через определители матриц.</p>
+            <div class="formula">Δ = <span>|a₁b₂ − a₂b₁|</span></div>
+            <p style="font-size:12px;color:#666;margin-top:8px">Если Δ≠0 — единственное решение; Δ=0 — нет реш. или ∞ решений.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Квадратные неравенства</div>
+            <div class="card-subtitle">Disequazioni di secondo grado</div>
+            <div class="formula">ax² + bx + c &gt; 0</div>
+            <p style="font-size:13px;color:#444;margin-top:12px;line-height:1.6">1. Найти корни x₁, x₂ (x₁ &lt; x₂).<br>2. Если a &gt; 0: решение x &lt; x₁ или x &gt; x₂.<br>3. Если a &gt; 0 и D &lt; 0: неравенство выполняется всегда (∀x).<br>4. Паrabola volta su: positiva esternamente alle radici.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Дробно-рациональные уравнения</div>
+            <div class="card-subtitle">Equazioni razionali fratte</div>
+            <div class="formula">P(x)/Q(x) = 0</div>
+            <p style="font-size:13px;color:#444;margin-top:12px;line-height:1.6">Условие: <strong>P(x) = 0</strong> И <strong>Q(x) ≠ 0</strong>.<br><br>ОДЗ: Q(x) ≠ 0 — обязательно проверять.<br>Умножать обе части на Q(x) нельзя без проверки знака (важно для неравенств).</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Уравнения и неравенства с радикалами</div>
+            <div class="card-subtitle">Equazioni e disequazioni con radicali</div>
+            <div class="formula">√f(x) = g(x)</div>
+            <p style="font-size:13px;color:#444;margin-top:12px;line-height:1.6">Условия: <strong>f(x) ≥ 0</strong> И <strong>g(x) ≥ 0</strong>.<br>Тогда возводим в квадрат: f(x) = g(x)².<br><br>Для √f(x) &lt; g(x): нужно g(x) &gt; 0 И f(x) &lt; g(x)².</p>
+            <div class="formula">√(√x) = <span>x^(1/4)</span></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Показательные и логарифмические уравнения</div>
+            <div class="card-subtitle">Equazioni logaritmiche ed esponenziali</div>
+            <div class="formula">aˣ = aʸ ⟺ <span>x = y</span></div>
+            <div class="formula">log_a(f) = log_a(g) ⟺ <span>f = g, f &gt; 0</span></div>
+            <p style="font-size:13px;color:#444;margin-top:12px;line-height:1.6">Для логарифмических неравенств: знак меняется если <strong>0 &lt; a &lt; 1</strong> (основание). Всегда проверять ОДЗ (аргумент &gt; 0).</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Тригонометрические уравнения</div>
+            <div class="card-subtitle">Equazioni trigonometriche</div>
+            <div class="formula">sin x = a → <span>x = arcsin a + 2πk</span></div>
+            <div class="formula"> <span>x = π − arcsin a + 2πk</span></div>
+            <div class="formula">cos x = a → <span>x = ±arccos a + 2πk</span></div>
+            <div class="formula">tan x = a → <span>x = arctan a + πk</span></div>
+            <p style="font-size:13px;color:#444;margin-top:12px;line-height:1.6">k ∈ ℤ. Особые случаи: sin x = 0 → x = πk; cos x = 0 → x = π/2 + πk.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ GEOMETRIA ANALITICA ══ -->
+      <div class="content-section" id="sec-geometria-analitica" style="display:none">
+        <div class="section-tag">Geometria analitica e funzioni numeriche</div>
+        <div class="section-title">Аналитическая геометрия</div>
+        <div class="section-desc">Декартовы координаты. Прямая, окружность, парабола, эллипс, гипербола. Графики функций.</div>
+        <div class="cards">
+          <div class="card">
+            <div class="card-title">Прямая на плоскости</div>
+            <div class="card-subtitle">Retta nel piano cartesiano</div>
+            <div class="formula">y = <span>mx + q</span></div>
+            <div class="formula">m = <span>(y₂−y₁)/(x₂−x₁)</span></div>
+            <div class="formula">d(P,r) = <span>|ax₀+by₀+c| / √(a²+b²)</span></div>
+            <p style="font-size:13px;color:#444;margin-top:12px;line-height:1.6">Параллельные: m₁ = m₂. Перпендикулярные: m₁ · m₂ = −1.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Окружность</div>
+            <div class="card-subtitle">Circonferenza</div>
+            <div class="formula">(x−a)² + (y−b)² = <span>r²</span></div>
+            <div class="formula">x² + y² + Dx + Ey + F = <span>0</span></div>
+            <p style="font-size:13px;color:#444;margin-top:12px;line-height:1.6">Центр (a,b), радиус r. В общей форме: центр (−D/2, −E/2), r = √(D²/4 + E²/4 − F).</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Парабола</div>
+            <div class="card-subtitle">Parabola</div>
+            <div class="formula">y = <span>ax² + bx + c</span></div>
+            <div class="formula">Вершина: x_v = <span>−b / (2a)</span></div>
+            <div class="formula">y_v = <span>c − b²/(4a)</span></div>
+            <p style="font-size:13px;color:#444;margin-top:12px;line-height:1.6">a &gt; 0: ветви вверх; a &lt; 0: вниз. Ось симметрии x = −b/(2a).</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Эллипс и Гипербола</div>
+            <div class="card-subtitle">Ellisse e Iperbole</div>
+            <div class="formula">Эллипс: x²/a² + y²/b² = <span>1</span></div>
+            <div class="formula">Гипербола: x²/a² − y²/b² = <span>1</span></div>
+            <p style="font-size:13px;color:#444;margin-top:12px;line-height:1.6">Эллипс: a,b — полуоси. Если a=b — окружность. Гипербола: асимптоты y = ±(b/a)x.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Графики элементарных функций</div>
+            <div class="card-subtitle">Grafici delle funzioni elementari</div>
+            <span class="tag tag-blue">y = xⁿ (степенные)</span>
+            <span class="tag tag-amber">y = aˣ (показательные)</span>
+            <span class="tag tag-blue">y = log_a(x)</span>
+            <span class="tag tag-amber">y = |x|, y = 1/x</span>
+            <p style="font-size:13px;color:#444;margin-top:12px;line-height:1.6">Нужно знать форму, область определения, точки пересечения с осями и монотонность каждого типа.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ OSSIDO-RIDUZIONE ══ -->
+      <div class="content-section" id="sec-ossidoriduzione" style="display:none">
+        <div class="section-tag">Chimica</div>
+        <div class="section-title">Окисление-Восстановление</div>
+        <div class="section-desc">Степени окисления, окислитель и восстановитель, уравнивание ОВР, реакции горения.</div>
+        <div class="cards">
+          <div class="card">
+            <div class="card-title">Степень окисления</div>
+            <div class="card-subtitle">Numero di ossidazione</div>
+            <span class="tag tag-blue">O обычно: −2</span>
+            <span class="tag tag-amber">H обычно: +1</span>
+            <span class="tag tag-blue">Металлы IA: +1</span>
+            <span class="tag tag-amber">F всегда: −1</span>
+            <p style="font-size:13px;color:#444;margin-top:12px;line-height:1.6">Сумма степеней окисления в нейтральной молекуле = 0. В ионе = заряду иона.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Окислитель и восстановитель</div>
+            <div class="card-subtitle">Ossidante e riducente</div>
+            <div class="formula">Окисл.: <span>повышение степени окисления (теряет е⁻)</span></div>
+            <div class="formula">Восст.: <span>понижение степени окисления (принимает е⁻)</span></div>
+            <p style="font-size:13px;color:#444;margin-top:12px;line-height:1.6"><strong>Окислитель</strong> — принимает электроны, сам восстанавливается.<br><strong>Восстановитель</strong> — отдаёт электроны, сам окисляется.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Уравнивание ОВР (метод e⁻)</div>
+            <div class="card-subtitle">Bilanciamento redox</div>
+            <p style="font-size:13px;color:#444;margin-top:8px;line-height:1.6">1. Определить степени окисления всех атомов.<br>2. Выявить, кто окисляется (+), кто восстанавливается (−).<br>3. Записать полуреакции окисления и восстановления.<br>4. Уравнять число электронов (умножить на коэффициенты).<br>5. Сложить полуреакции и подобрать коэффициенты.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Реакции горения</div>
+            <div class="card-subtitle">Reazioni di combustione</div>
+            <div class="formula">CₙH₂ₙ₊₂ + O₂ → <span>CO₂ + H₂O</span></div>
+            <div class="formula">CH₄ + 2O₂ → <span>CO₂ + 2H₂O</span></div>
+            <p style="font-size:13px;color:#444;margin-top:12px;line-height:1.6">Полное горение: продукты CO₂ и H₂O.<br>Неполное горение: CO (угарный газ).<br>C → CO₂ (C: 0 → +4), O₂ → H₂O (O: 0 → −2).</p>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+
+  </main>
+</div>
+
+<!-- MOBILE DRAWER (outside .app for correct fixed positioning) -->
+<div class="mob-overlay" id="mobOverlay"></div>
+
+<div class="mob-drawer" id="mobDrawer">
+  <div class="mob-drawer-header">
+    <div class="mob-drawer-title">TOLC-I · Разделы</div>
+    <div class="mob-drawer-subtitle">Scienze & Matematica</div>
+  </div>
+  <div class="mob-drawer-nav">
+
+        <div class="mob-section open" id="ms-fisica">
+          <div class="mob-section-header">
+            <span class="mob-section-label">Физика</span>
+            <svg class="mob-section-arrow" viewBox="0 0 12 12"><polyline points="4,2 9,6 4,10"/></svg>
+          </div>
+          <div class="mob-section-items">
+            <div class="mob-nav-item active" data-section="meccanica">
+              <div class="mob-nav-icon"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="2.8"/><line x1="8" y1="1.5" x2="8" y2="4"/><line x1="8" y1="12" x2="8" y2="14.5"/><line x1="1.5" y1="8" x2="4" y2="8"/><line x1="12" y1="8" x2="14.5" y2="8"/><line x1="3.1" y1="3.1" x2="4.9" y2="4.9"/><line x1="11.1" y1="11.1" x2="12.9" y2="12.9"/><line x1="12.9" y1="3.1" x2="11.1" y2="4.9"/><line x1="4.9" y1="11.1" x2="3.1" y2="12.9"/></svg></div>
+              <div class="mob-nav-item-text"><div class="mob-nav-item-label">Механика</div><div class="mob-nav-item-sub">Meccanica</div></div>
+            </div>
+            <div class="mob-nav-item" data-section="ottica">
+              <div class="mob-nav-icon"><svg viewBox="0 0 16 16"><path d="M2 8 Q5 2 8 8 Q11 14 14 8"/><circle cx="8" cy="8" r="1.4" fill="rgba(255,255,255,0.35)" stroke="none"/></svg></div>
+              <div class="mob-nav-item-text"><div class="mob-nav-item-label">Оптика</div><div class="mob-nav-item-sub">Ottica</div></div>
+            </div>
+            <div class="mob-nav-item" data-section="termodinamica">
+              <div class="mob-nav-icon"><svg viewBox="0 0 16 16"><path d="M3 13 L6 4 L9 9 L12 5"/><line x1="1.5" y1="13" x2="14.5" y2="13"/></svg></div>
+              <div class="mob-nav-item-text"><div class="mob-nav-item-label">Термодинамика</div><div class="mob-nav-item-sub">Termodinamica</div></div>
+            </div>
+            <div class="mob-nav-item" data-section="elettromagnetismo">
+              <div class="mob-nav-icon"><svg viewBox="0 0 16 16"><path d="M8 2 L5 7 L8 7 L5 14"/><line x1="11" y1="3" x2="11" y2="13"/><line x1="9.5" y1="5" x2="12.5" y2="5"/><line x1="9.5" y1="11" x2="12.5" y2="11"/></svg></div>
+              <div class="mob-nav-item-text"><div class="mob-nav-item-label">Электромагнетизм</div><div class="mob-nav-item-sub">Elettromagnetismo</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mob-section" id="ms-chimica">
+          <div class="mob-section-header">
+            <span class="mob-section-label">Химия</span>
+            <svg class="mob-section-arrow" viewBox="0 0 12 12"><polyline points="4,2 9,6 4,10"/></svg>
+          </div>
+          <div class="mob-section-items">
+            <div class="mob-nav-item" data-section="chimica">
+              <div class="mob-nav-icon"><svg viewBox="0 0 16 16"><circle cx="5.5" cy="5.5" r="2.5"/><circle cx="10.5" cy="10.5" r="2.5"/><line x1="7.5" y1="7.5" x2="8.5" y2="8.5"/></svg></div>
+              <div class="mob-nav-item-text"><div class="mob-nav-item-label">Химия & Строение</div><div class="mob-nav-item-sub">Chimica</div></div>
+            </div>
+            <div class="mob-nav-item" data-section="stechiometria">
+              <div class="mob-nav-icon"><svg viewBox="0 0 16 16"><path d="M3 12 L5 5 L8 9 L11 5 L13 12"/><line x1="1.5" y1="12" x2="14.5" y2="12"/></svg></div>
+              <div class="mob-nav-item-text"><div class="mob-nav-item-label">Стехиометрия</div><div class="mob-nav-item-sub">Stechiometria</div></div>
+            </div>
+            <div class="mob-nav-item" data-section="chimica-organica">
+              <div class="mob-nav-icon"><svg viewBox="0 0 16 16"><path d="M5 14 L7 8 L9 8 L11 14"/><line x1="6" y1="11" x2="10" y2="11"/><line x1="7" y1="8" x2="7.5" y2="2"/><line x1="9" y1="8" x2="8.5" y2="2"/><line x1="7.5" y1="2" x2="8.5" y2="2"/></svg></div>
+              <div class="mob-nav-item-text"><div class="mob-nav-item-label">Орган. химия</div><div class="mob-nav-item-sub">Chimica organica</div></div>
+            </div>
+            <div class="mob-nav-item" data-section="soluzioni">
+              <div class="mob-nav-icon"><svg viewBox="0 0 16 16"><path d="M4 5 Q8 2 12 5 L13 11 Q8 14.5 3 11 Z"/><line x1="8" y1="4.5" x2="8" y2="11.5"/></svg></div>
+              <div class="mob-nav-item-text"><div class="mob-nav-item-label">Растворы & pH</div><div class="mob-nav-item-sub">Soluzioni</div></div>
+            </div>
+            <div class="mob-nav-item" data-section="ossidoriduzione">
+              <div class="mob-nav-icon"><svg viewBox="0 0 16 16"><path d="M3 8 Q5 3 8 8 Q11 13 13 8"/><line x1="4" y1="5" x2="6" y2="5"/><line x1="10" y1="11" x2="12" y2="11"/></svg></div>
+              <div class="mob-nav-item-text"><div class="mob-nav-item-label">Окисл.-восст.</div><div class="mob-nav-item-sub">Ossido-riduzione</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mob-section" id="ms-mat">
+          <div class="mob-section-header">
+            <span class="mob-section-label">Математика</span>
+            <svg class="mob-section-arrow" viewBox="0 0 12 12"><polyline points="4,2 9,6 4,10"/></svg>
+          </div>
+          <div class="mob-section-items">
+            <div class="mob-nav-item" data-section="numeri">
+              <div class="mob-nav-icon"><svg viewBox="0 0 16 16"><line x1="3" y1="8" x2="13" y2="8"/><line x1="8" y1="3" x2="8" y2="13"/></svg></div>
+              <div class="mob-nav-item-text"><div class="mob-nav-item-label">Числа & Арифметика</div><div class="mob-nav-item-sub">Aritmetica</div></div>
+            </div>
+            <div class="mob-nav-item" data-section="algebra">
+              <div class="mob-nav-icon"><svg viewBox="0 0 16 16"><line x1="3" y1="8" x2="13" y2="8"/><line x1="8" y1="3" x2="8" y2="13"/></svg></div>
+              <div class="mob-nav-item-text"><div class="mob-nav-item-label">Алгебра</div><div class="mob-nav-item-sub">Algebra</div></div>
+            </div>
+            <div class="mob-nav-item" data-section="polinomi">
+              <div class="mob-nav-icon"><svg viewBox="0 0 16 16"><path d="M2 13 Q5 3 8 8 Q11 13 14 3"/></svg></div>
+              <div class="mob-nav-item-text"><div class="mob-nav-item-label">Многочлены</div><div class="mob-nav-item-sub">Polinomi</div></div>
+            </div>
+            <div class="mob-nav-item" data-section="equazioni">
+              <div class="mob-nav-icon"><svg viewBox="0 0 16 16"><line x1="3" y1="7" x2="13" y2="7"/><line x1="3" y1="9" x2="13" y2="9"/></svg></div>
+              <div class="mob-nav-item-text"><div class="mob-nav-item-label">Уравнения & Неравенства</div><div class="mob-nav-item-sub">Equazioni</div></div>
+            </div>
+            <div class="mob-nav-item" data-section="analisi">
+              <div class="mob-nav-icon"><svg viewBox="0 0 16 16"><path d="M2 12 Q5 2 8 8 Q11 14 14 4"/><line x1="2" y1="12" x2="14" y2="12"/></svg></div>
+              <div class="mob-nav-item-text"><div class="mob-nav-item-label">Анализ</div><div class="mob-nav-item-sub">Analisi matematica</div></div>
+            </div>
+            <div class="mob-nav-item" data-section="geometria">
+              <div class="mob-nav-icon"><svg viewBox="0 0 16 16"><polygon points="8,2 14,14 2,14"/></svg></div>
+              <div class="mob-nav-item-text"><div class="mob-nav-item-label">Геометрия</div><div class="mob-nav-item-sub">Geometria</div></div>
+            </div>
+            <div class="mob-nav-item" data-section="geometria-analitica">
+              <div class="mob-nav-icon"><svg viewBox="0 0 16 16"><line x1="2" y1="8" x2="14" y2="8"/><line x1="8" y1="2" x2="8" y2="14"/><circle cx="11" cy="5" r="3"/></svg></div>
+              <div class="mob-nav-item-text"><div class="mob-nav-item-label">Аналит. геометрия</div><div class="mob-nav-item-sub">Geometria analitica</div></div>
+            </div>
+            <div class="mob-nav-item" data-section="trigonometria">
+              <div class="mob-nav-icon"><svg viewBox="0 0 16 16"><path d="M2 10 Q5 3 8 8 Q11 13 14 6"/><circle cx="4.5" cy="9" r="1.2" fill="rgba(255,255,255,0.3)" stroke="none"/><circle cx="11.5" cy="7" r="1.2" fill="rgba(255,255,255,0.3)" stroke="none"/></svg></div>
+              <div class="mob-nav-item-text"><div class="mob-nav-item-label">Тригонометрия</div><div class="mob-nav-item-sub">Trigonometria</div></div>
+            </div>
+            <div class="mob-nav-item" data-section="statistica">
+              <div class="mob-nav-icon"><svg viewBox="0 0 16 16"><rect x="2" y="5" width="12" height="8" rx="1"/><line x1="5" y1="5" x2="5" y2="3"/><line x1="11" y1="5" x2="11" y2="3"/><line x1="2" y1="8" x2="14" y2="8"/></svg></div>
+              <div class="mob-nav-item-text"><div class="mob-nav-item-label">Статистика</div><div class="mob-nav-item-sub">Statistica</div></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+</div>
+
+<!-- FAB -->
+<button class="mob-fab" id="mobFab" aria-label="Разделы">
+  <svg viewBox="0 0 20 20"><line x1="3" y1="6" x2="17" y2="6"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="14" x2="17" y2="14"/></svg>
+</button>
+
+<script>
+  const app = document.getElementById('app');
+  const hamburger = document.getElementById('hamburger');
+  const overlay = document.getElementById('overlay');
+  const sidebarClose = document.getElementById('sidebarClose');
+  const mobFab = document.getElementById('mobFab');
+  const mobOverlay = document.getElementById('mobOverlay');
+
+  // ── Section switching ──
+  function showSection(sectionId) {
+    document.querySelectorAll('.content-section').forEach(s => s.style.display = 'none');
+    const target = document.getElementById('sec-' + sectionId);
+    if (target) {
+      target.style.display = '';
+      // Scroll main to top
+      document.querySelector('.main').scrollTop = 0;
+    }
+  }
+
+  // Desktop sidebar
+  hamburger.addEventListener('click', () => app.classList.toggle('sidebar-open'));
+  overlay.addEventListener('click', () => app.classList.remove('sidebar-open'));
+  sidebarClose.addEventListener('click', () => app.classList.remove('sidebar-open'));
+
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+      document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+      item.classList.add('active');
+      const sec = item.dataset.section;
+      if (sec) showSection(sec);
+      if (window.innerWidth <= 900) app.classList.remove('sidebar-open');
+    });
+  });
+
+  // Mobile drawer FAB toggle
+  function openDrawer() { document.body.classList.add('drawer-open'); }
+  function closeDrawer() { document.body.classList.remove('drawer-open'); }
+
+  mobFab.addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.body.classList.contains('drawer-open') ? closeDrawer() : openDrawer();
+  });
+  mobOverlay.addEventListener('click', closeDrawer);
+
+  // Section accordion
+  document.querySelectorAll('.mob-section-header').forEach(header => {
+    function toggleSection(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const section = header.closest('.mob-section');
+      const isOpen = section.classList.contains('open');
+      document.querySelectorAll('.mob-section').forEach(s => s.classList.remove('open'));
+      if (!isOpen) section.classList.add('open');
+    }
+    header.addEventListener('click', toggleSection);
+  });
+
+  // Mobile nav items
+  document.querySelectorAll('.mob-nav-item').forEach(item => {
+    function selectItem(e) {
+      e.stopPropagation();
+      document.querySelectorAll('.mob-nav-item').forEach(i => i.classList.remove('active'));
+      item.classList.add('active');
+      const sec = item.dataset.section;
+      if (sec) showSection(sec);
+      // Also sync desktop active state
+      document.querySelectorAll('.nav-item').forEach(i => {
+        i.classList.toggle('active', i.dataset.section === sec);
+      });
+      item.style.background = 'rgba(201,168,76,0.18)';
+      setTimeout(() => {
+        item.style.background = '';
+        closeDrawer();
+      }, 180);
+    }
+    item.addEventListener('click', selectItem);
+  });
+</script>
+</body>
+</html>
